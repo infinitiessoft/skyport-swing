@@ -29,9 +29,10 @@ import com.infinities.skyport.model.configuration.Configuration;
 import com.infinities.skyport.testcase.IntegrationTest;
 
 @Category(IntegrationTest.class)
-public class FunctionSettingPanelTest {
+public class AdvanceDialogManualIT {
 
-	private FunctionSettingPanel panel;
+	private JDialog parent;
+	private AdvanceDialog dialog;
 
 
 	@Before
@@ -44,31 +45,35 @@ public class FunctionSettingPanelTest {
 
 	@Test
 	public void testNewForm() throws Exception {
+		parent = new JDialog();
 		Configuration configuration = new Configuration();
-		panel = new FunctionSettingPanel("Settings", configuration);
-		JDialog d = new JDialog(); // Creates dialog
-		d.setModal(true); // Means it will wait
-		d.add(panel); // Add your panel
-		d.setSize(750, 400); // Set size (probably want this relating to your
-								// panel
-		d.setVisible(true);
+		dialog = new AdvanceDialog(parent, configuration);
+		dialog.setVisible(true);
 	}
 
 	@Test
-	public void testUpdatedForm() throws Exception {
+	public void testOldForm() throws Exception {
+		parent = new JDialog();
 		Configuration configuration = new Configuration();
 		configuration.getAdminConfiguration().getAccountConfiguration().getCreate().getDelay().setNumber(60);
 		configuration.getAdminConfiguration().getAccountConfiguration().getCreate().getDelay().setUnit(TimeUnit.MINUTES);
 		configuration.getAdminConfiguration().getAccountConfiguration().getCreate().getTimeout().setNumber(5);
 		configuration.getAdminConfiguration().getAccountConfiguration().getCreate().getTimeout().setUnit(TimeUnit.HOURS);
 		configuration.getAdminConfiguration().getAccountConfiguration().getCreate().setPoolSize(PoolSize.MEDIUM);
-		panel = new FunctionSettingPanel("Settings", configuration);
-		JDialog d = new JDialog(); // Creates dialog
-		d.setModal(true); // Means it will wait
-		d.add(panel); // Add your panel
-		d.setSize(750, 400); // Set size (probably want this relating to your
-								// panel
-		d.setVisible(true);
+		configuration.getShortPoolConfig().setCoreSize(1);
+		configuration.getShortPoolConfig().setKeepAlive(2);
+		configuration.getShortPoolConfig().setMaxSize(3);
+		configuration.getShortPoolConfig().setQueueCapacity(4);
+		configuration.getMediumPoolConfig().setCoreSize(5);
+		configuration.getMediumPoolConfig().setKeepAlive(6);
+		configuration.getMediumPoolConfig().setMaxSize(7);
+		configuration.getMediumPoolConfig().setQueueCapacity(8);
+		configuration.getLongPoolConfig().setCoreSize(9);
+		configuration.getLongPoolConfig().setKeepAlive(10);
+		configuration.getLongPoolConfig().setMaxSize(11);
+		configuration.getLongPoolConfig().setQueueCapacity(12);
+		dialog = new AdvanceDialog(parent, configuration);
+		dialog.setVisible(true);
 	}
 
 }

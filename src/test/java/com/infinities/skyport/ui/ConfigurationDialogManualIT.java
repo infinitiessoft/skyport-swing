@@ -15,10 +15,11 @@
  *******************************************************************************/
 package com.infinities.skyport.ui;
 
-import java.util.Calendar;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
+
+import javax.swing.JFrame;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -30,16 +31,14 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import com.infinities.skyport.ServiceProvider;
-import com.infinities.skyport.cache.CachedServiceProvider;
 import com.infinities.skyport.model.PoolSize;
 import com.infinities.skyport.model.configuration.Configuration;
 import com.infinities.skyport.service.ConfigurationHome;
-import com.infinities.skyport.service.ConfigurationLifeCycleListener;
 import com.infinities.skyport.service.DriverHome;
 import com.infinities.skyport.testcase.IntegrationTest;
 
 @Category(IntegrationTest.class)
-public class MainFrameTest {
+public class ConfigurationDialogManualIT {
 
 	protected Mockery context = new JUnit4Mockery() {
 
@@ -47,17 +46,16 @@ public class MainFrameTest {
 			setThreadingPolicy(new Synchroniser());
 		}
 	};
+	private JFrame frame;
+	private ConfigurationDialog dialog;
 	private DriverHome driverHome;
 	private ConfigurationHome configurationHome;
 	private SortedMap<String, Class<? extends ServiceProvider>> driverMap = new TreeMap<String, Class<? extends ServiceProvider>>();
-	private MainFrame frame;
-	private CachedServiceProvider serviceProvider;
 
 
 	@Before
 	public void setUp() throws Exception {
-		serviceProvider = context.mock(CachedServiceProvider.class);
-		driverHome = context.mock(DriverHome.class);
+		frame = new JFrame();
 		configurationHome = context.mock(ConfigurationHome.class);
 	}
 
@@ -66,11 +64,65 @@ public class MainFrameTest {
 	}
 
 	@Test
-	public void test() throws InterruptedException {
+	public void testNewForm() throws Exception {
 		driverMap = new TreeMap<String, Class<? extends ServiceProvider>>();
 		driverMap.put("noExtraValue", NoExtraValueServiceProvider.class);
 		driverMap.put("withExtraValue", WithExtraValueServiceProvider.class);
-		final Configuration configuration = new Configuration();
+		driverHome = context.mock(DriverHome.class);
+		frame.setVisible(true);
+		context.checking(new Expectations() {
+
+			{
+				allowing(driverHome).findAll();
+				will(returnValue(driverMap));
+
+				allowing(driverHome).findByName("noExtraValue");
+				will(returnValue(NoExtraValueServiceProvider.class));
+
+				allowing(driverHome).findByName("withExtraValue");
+				will(returnValue(WithExtraValueServiceProvider.class));
+			}
+		});
+		context.checking(new Expectations() {
+
+			{
+				allowing(configurationHome).findByName(with(any(String.class)));
+				will(returnValue(null));
+			}
+		});
+		Configuration configuration = new Configuration();
+		dialog = new ConfigurationDialog(frame, configuration, configurationHome, driverHome);
+		dialog.showDialog();
+	}
+
+	@Test
+	public void testUpdatedForm() throws Exception {
+		driverMap = new TreeMap<String, Class<? extends ServiceProvider>>();
+		driverMap.put("noExtraValue", NoExtraValueServiceProvider.class);
+		driverMap.put("withExtraValue", WithExtraValueServiceProvider.class);
+		driverHome = context.mock(DriverHome.class);
+		frame.setVisible(true);
+		context.checking(new Expectations() {
+
+			{
+				allowing(driverHome).findAll();
+				will(returnValue(driverMap));
+
+				allowing(driverHome).findByName("noExtraValue");
+				will(returnValue(NoExtraValueServiceProvider.class));
+
+				allowing(driverHome).findByName("withExtraValue");
+				will(returnValue(WithExtraValueServiceProvider.class));
+			}
+		});
+		context.checking(new Expectations() {
+
+			{
+				allowing(configurationHome).findByName(with(any(String.class)));
+				will(returnValue(null));
+			}
+		});
+		Configuration configuration = new Configuration();
 		configuration.setCacheable(true);
 		configuration.setAccount("account");
 		configuration.setProviderClass("withExtraValue");
@@ -97,41 +149,7 @@ public class MainFrameTest {
 		configuration.getLongPoolConfig().setKeepAlive(10);
 		configuration.getLongPoolConfig().setMaxSize(11);
 		configuration.getLongPoolConfig().setQueueCapacity(12);
-		configuration.setModifiedDate(Calendar.getInstance());
-		configuration.setId("demo");
-		context.checking(new Expectations() {
-
-			{
-				allowing(driverHome).findAll();
-				will(returnValue(driverMap));
-
-				allowing(driverHome).findByName("noExtraValue");
-				will(returnValue(NoExtraValueServiceProvider.class));
-
-				allowing(driverHome).findByName("withExtraValue");
-				will(returnValue(WithExtraValueServiceProvider.class));
-			}
-		});
-		context.checking(new Expectations() {
-
-			{
-				oneOf(configurationHome).addLifeCycleListener(with(any(ConfigurationLifeCycleListener.class)));
-
-				allowing(configurationHome).findById("demo");
-				will(returnValue(serviceProvider));
-				
-				allowing(configurationHome).findByName("cloudName");
-				will(returnValue(serviceProvider));
-
-				allowing(serviceProvider).getConfiguration();
-				will(returnValue(configuration));
-			}
-		});
-		frame = new MainFrame(driverHome, configurationHome, "protocol", "ip", "port");
-		frame.activate();
-		frame.setVisible(true);
-		frame.persist(configuration);
-		Thread.sleep(20000);
+		dialog = new ConfigurationDialog(frame, configuration, configurationHome, driverHome);
+		dialog.showDialog();
 	}
-
 }
