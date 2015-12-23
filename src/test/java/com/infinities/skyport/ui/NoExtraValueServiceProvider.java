@@ -22,7 +22,6 @@ import org.dasein.cloud.InternalException;
 import org.dasein.cloud.ProviderContext;
 import org.dasein.cloud.admin.AdminServices;
 import org.dasein.cloud.ci.CIServices;
-import org.dasein.cloud.compute.ComputeServices;
 import org.dasein.cloud.dc.DataCenterServices;
 import org.dasein.cloud.identity.IdentityServices;
 import org.dasein.cloud.network.NetworkServices;
@@ -35,6 +34,7 @@ import org.jmock.integration.junit4.JUnit4Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 
 import com.infinities.skyport.ServiceProvider;
+import com.infinities.skyport.compute.SkyportComputeServices;
 
 public class NoExtraValueServiceProvider implements ServiceProvider {
 
@@ -158,8 +158,7 @@ public class NoExtraValueServiceProvider implements ServiceProvider {
 	}
 
 	@Override
-	public ComputeServices getComputeServices() {
-
+	public SkyportComputeServices getSkyportComputeServices() {
 		return null;
 	}
 
