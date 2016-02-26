@@ -22,9 +22,7 @@ import org.dasein.cloud.InternalException;
 import org.dasein.cloud.ProviderContext;
 import org.dasein.cloud.admin.AdminServices;
 import org.dasein.cloud.ci.CIServices;
-import org.dasein.cloud.dc.DataCenterServices;
 import org.dasein.cloud.identity.IdentityServices;
-import org.dasein.cloud.network.NetworkServices;
 import org.dasein.cloud.platform.PlatformServices;
 import org.dasein.cloud.storage.StorageServices;
 import org.dasein.cloud.util.NamingConstraints;
@@ -35,6 +33,8 @@ import org.jmock.lib.concurrent.Synchroniser;
 
 import com.infinities.skyport.ServiceProvider;
 import com.infinities.skyport.compute.SkyportComputeServices;
+import com.infinities.skyport.dc.SkyportDataCenterServices;
+import com.infinities.skyport.network.SkyportNetworkServices;
 
 public class NoExtraValueServiceProvider implements ServiceProvider {
 
@@ -45,11 +45,11 @@ public class NoExtraValueServiceProvider implements ServiceProvider {
 		}
 	};
 
-	private DataCenterServices dataCenterServices = null;
+	private SkyportDataCenterServices dataCenterServices = null;
 
 
 	public NoExtraValueServiceProvider() {
-		dataCenterServices = context.mock(DataCenterServices.class);
+		dataCenterServices = context.mock(SkyportDataCenterServices.class);
 
 	}
 
@@ -147,7 +147,7 @@ public class NoExtraValueServiceProvider implements ServiceProvider {
 	}
 
 	@Override
-	public DataCenterServices getDataCenterServices() {
+	public SkyportDataCenterServices getSkyportDataCenterServices() {
 		return dataCenterServices;
 	}
 
@@ -169,7 +169,7 @@ public class NoExtraValueServiceProvider implements ServiceProvider {
 	}
 
 	@Override
-	public NetworkServices getNetworkServices() {
+	public SkyportNetworkServices getSkyportNetworkServices() {
 
 		return null;
 	}
