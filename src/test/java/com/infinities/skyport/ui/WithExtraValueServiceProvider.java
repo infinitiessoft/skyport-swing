@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.infinities.skyport.ui;
 
+import org.apache.commons.lang3.concurrent.ConcurrentException;
 import org.dasein.cloud.CloudException;
 import org.dasein.cloud.CloudProvider;
 import org.dasein.cloud.ContextRequirements;
@@ -37,6 +38,7 @@ import com.infinities.skyport.ServiceProvider;
 import com.infinities.skyport.compute.SkyportComputeServices;
 import com.infinities.skyport.dc.SkyportDataCenterServices;
 import com.infinities.skyport.network.SkyportNetworkServices;
+import com.infinities.skyport.storage.SkyportStorageServices;
 
 public class WithExtraValueServiceProvider implements ServiceProvider {
 
@@ -115,12 +117,6 @@ public class WithExtraValueServiceProvider implements ServiceProvider {
 	}
 
 	@Override
-	public StorageServices getStorageServices() {
-
-		return null;
-	}
-
-	@Override
 	public AdminServices getAdminServices() {
 
 		return null;
@@ -171,13 +167,6 @@ public class WithExtraValueServiceProvider implements ServiceProvider {
 		return null;
 	}
 
-	@Override
-	public SkyportNetworkServices getSkyportNetworkServices() {
-
-		return null;
-	}
-
-	@Override
 	public PlatformServices getPlatformServices() {
 
 		return null;
@@ -199,6 +188,16 @@ public class WithExtraValueServiceProvider implements ServiceProvider {
 	@Override
 	public void close() {
 
+	}
+
+	@Override
+	public SkyportNetworkServices getSkyportNetworkServices() throws ConcurrentException {
+		return null;
+	}
+
+	@Override
+	public SkyportStorageServices getSkyportStorageServices() throws ConcurrentException {
+		return null;
 	}
 
 }
